@@ -58,7 +58,7 @@ fn find_astar_path(snake: &Vec<Position>, apple: &Position) -> Vec<Direction> {
                 Direction::Left => _neighbor = Position::left(cur.get_pos()),
                 Direction::Right => _neighbor = Position::right(cur.get_pos()),
             }
-            if (!Map::edge_check(&_neighbor, &snake)) && (!closed_set.contains(&_neighbor)){
+            if (!Map::edge_check(&_neighbor, &snake[0..=2])) && (!closed_set.contains(&_neighbor)){
                 let g = cur.get_g();
                 let h = Node::heuristic(&_neighbor, goal);
                 open_set.push(Node::new((_neighbor).clone(), g, h, Some((cur).clone())));

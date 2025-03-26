@@ -11,7 +11,7 @@ pub mod map {
         //     Map { snake, obstacles, apple }
         // }
 
-        pub fn edge_check(pos: &Position, snake: &Vec<Position>) -> bool {
+        pub fn edge_check(pos: &Position, snake: &[Position]) -> bool {
             if pos.x <= 0 || pos.x > 8 || pos.y <= 0 || pos.y > 8 {
                 return true;
             } else if snake.contains(pos) {
