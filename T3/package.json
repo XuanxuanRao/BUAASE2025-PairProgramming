@@ -1,0 +1,18 @@
+{
+  "name": "t3-test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "test.js",
+  "scripts": {
+    "submit-test": "node test.js",
+    "display-test": "node test-tui.js"
+  },
+  "type": "module",
+  "author": "BUAAASE-2025",
+  "license": "ISC",
+  "dependencies": {
+    "blessed": "^0.1.81"
+  }
+}
+  
+  

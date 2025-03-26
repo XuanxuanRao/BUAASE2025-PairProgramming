@@ -1,0 +1,11 @@
+{
+  "name": "board",
+  "version": "0.1.0",
+  "files": [
+    "board_bg.wasm",
+    "board.js",
+    "board.d.ts"
+  ],
+  "main": "board.js",
+  "types": "board.d.ts"
+}

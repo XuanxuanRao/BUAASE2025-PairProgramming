@@ -1,0 +1,12 @@
+{
+  "name": "t1-test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "test.js",
+  "scripts": {
+    "submit-test": "node test.js"
+  },
+  "type": "module",
+  "author": "BUAAASE-2025",
+  "license": "ISC"
+}
