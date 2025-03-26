@@ -149,17 +149,17 @@ mod tests {
     
 
     #[test]
-    #[ignore = "ignore"]
-    fn test_no_way_to_eat_apple() {
-        let mut snake = vec![1, 1, 1, 2, 2, 2,1];
+    /// 蛇卷曲为一个正方形形状，检验是否正确处理了蛇身碰撞
+    fn test_square_snake() {
+        let mut snake = vec![1, 1, 1, 2, 2, 2, 2, 1];
         let apple = vec![6, 6];
         let res = game(&mut snake, &apple);
-        assert_eq!(res, 1);
+        assert_eq!(res, 0);
     }
 
     #[test]
     fn test_common1() {
-        let mut snake = vec![1, 1, 1, 2, 1, 3, 1, 4]; // 初始蛇
+        let mut snake = vec![3, 1, 3, 2, 3, 3, 3, 4]; // 初始蛇
         let apple = vec![2, 1]; // 初始苹果
         let res = game(&mut snake, &apple);
         assert_eq!(res, 0);
@@ -172,6 +172,15 @@ mod tests {
         let res = game(&mut snake, &apple);
         assert_eq!(res, 0);
     }
+
+    #[test]
+    fn test_edge() {
+        let mut snake = vec![8, 8, 8, 7, 8, 6, 8, 5];
+        let apple = vec![1, 1];
+        let res = game(&mut snake, &apple);
+        assert_eq!(res, 0)
+    }
+
 
     // fn generate_apple(snake: &[i32; 8]) -> [i32; 2] {
     //     let mut rng = thread_rng();
