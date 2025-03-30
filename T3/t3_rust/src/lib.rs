@@ -20,7 +20,7 @@ pub fn greedy_snake_step(board_size: i32, input_my_snake: Vec<i32>, snake_num: i
             Direction::Right => return 3,
         }
     } else {
-        return -1;
+        return 1; // arbitrary direction
     }
 }
 
