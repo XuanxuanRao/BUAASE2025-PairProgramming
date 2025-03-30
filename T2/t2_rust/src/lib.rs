@@ -2,9 +2,11 @@ use astar::astar::Node;
 use map::map::{Direction, Map, Position};
 use std::collections::{BinaryHeap, HashSet};
 use wasm_bindgen::prelude::*;
+use std::time::{SystemTime, UNIX_EPOCH};
 
 pub mod map;
 pub mod astar;
+pub mod random;
 
 #[wasm_bindgen]
 pub fn greedy_snake_move_barriers(input_snake: Vec<i32>, input_apple: Vec<i32>, input_obtacles: Vec<i32>) -> i32 {
@@ -119,8 +121,120 @@ fn reconstruct_path(node: &Node) -> Vec<Direction> {
 
 #[cfg(test)]
 mod tests {
+    use super::*;
+    use random::RandomGenerator;
 
-    // use super::*;
+    /// 检查位置是否与已有位置重叠
+    fn is_position_overlap(x: i32, y: i32, positions: &[(i32, i32)]) -> bool {
+        positions.iter().any(|&(px, py)| px == x && py == y)
+    }
 
+    /// 生成不重叠的随机位置
+    fn generate_unique_position(existing_positions: &[(i32, i32)]) -> (i32, i32) {
+        // 获取当前时间戳作为种子
+        let timestamp = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap()
+            .as_nanos() as u64;
+        let mut rng = RandomGenerator::new(timestamp);
+        
+        loop {
+            let x = rng.generate_int(0, 10);
+            let y = rng.generate_int(0, 10);
+            if !is_position_overlap(x, y, existing_positions) {
+                return (x, y);
+            }
+        }
+    }
+
+
+    /// 进行一轮贪吃蛇游戏，直到撞墙、吃到苹果或判断无法吃到
+    /// 如果顺利吃到了苹果，返回0；如果蛇死了，返回-1
+    fn game(snake: &mut Vec<i32>, apple: &Vec<i32>, obstacles: &Vec<i32>) -> i32 {
+        loop {
+            let dir = greedy_snake_move_barriers(snake.clone(), apple.clone(), obstacles.clone());
+            if dir == -1 {
+                return 1;
+            }
+    
+            let mut new_snake = [0; 8];
+    
+            new_snake[0] = snake[0] + if dir == 3 { 1 } else { 0 } - if dir == 1 { 1 } else { 0 };
+            new_snake[1] = snake[1] + if dir == 0 { 1 } else { 0 } - if dir == 2 { 1 } else { 0 };
+    
+            for i in (2..8).step_by(2) {
+                new_snake[i] = snake[i - 2];
+                new_snake[i + 1] = snake[i - 1];
+            }
+    
+            // 检查是否与障碍物碰撞
+            for i in (0..obstacles.len()).step_by(2) {
+                if new_snake[0] == obstacles[i] && new_snake[1] == obstacles[i + 1] {
+                    println!("\n撞到了障碍物");
+                    return -1;
+                }
+            }
+    
+            // 检查是否与蛇身碰撞
+            for i in (2..8).step_by(2) {
+                if new_snake[0] == new_snake[i] && new_snake[1] == new_snake[i + 1] {
+                    println!("\n撞到了自己");
+                    return -1;
+                }
+            }
+    
+            // 检查是否超出边界
+            if new_snake[0] < 0 || new_snake[0] > 10 || new_snake[1] < 0 || new_snake[1] > 10 {
+                println!("\n撞墙了.....");
+                return -1;
+            }
+    
+            snake.clone_from_slice(&new_snake);
+    
+            if snake[0] == apple[0] && snake[1] == apple[1] {
+                println!("\n成功吃到了苹果\n");
+                return 0;
+            }
+        }
+    }
+  
+    #[test]
+    fn test() {
+        let mut positions = Vec::new();
+        
+        // 生成蛇的位置（4个段）
+        let mut snake = Vec::new();
+        for _ in 0..4 {
+            let (x, y) = generate_unique_position(&positions);
+            positions.push((x, y));
+            snake.push(x);
+            snake.push(y);
+        }
+        
+        // 生成苹果位置
+        let (apple_x, apple_y) = generate_unique_position(&positions);
+        positions.push((apple_x, apple_y));
+        let apple = vec![apple_x, apple_y];
+        
+        // 生成障碍物位置（12个）
+        let mut obstacles = Vec::new();
+        for _ in 0..12 {
+            let (x, y) = generate_unique_position(&positions);
+            positions.push((x, y));
+            obstacles.push(x);
+            obstacles.push(y);
+        }
+        
+        // 打印测试场景
+        println!("测试场景：");
+        println!("蛇的位置: {:?}", snake);
+        println!("苹果位置: {:?}", apple);
+        println!("障碍物位置: {:?}", obstacles);
+        
+        // 测试游戏
+        let result = game(&mut snake, &apple, &obstacles);
+        println!("游戏结果: {}", result);
+        assert!(result == 0 || result == 1);
+    }
     
 }
