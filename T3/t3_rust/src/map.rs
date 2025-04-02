@@ -4,6 +4,8 @@ pub mod map {
     pub struct Map {
         my_snake: Snake,
         other_snakes: Vec<Snake>,
+        obstacles: Vec<Position>,
+        strict_obstacles: Vec<Position>,
         foods: Vec<Position>,
         size: i32,
     }
@@ -11,15 +13,61 @@ pub mod map {
     impl Map {
 
         pub fn new(my_snake: Snake, other_snakes: Vec<Snake>, foods: Vec<Position>, size: i32) -> Map {
-            Map { my_snake, other_snakes, foods, size}
+            let obstacles = Map::build_obstacles(&other_snakes);
+            let strict_obstacles = Map::build_strict_obstacles(&other_snakes);
+            Map { my_snake, other_snakes, obstacles, strict_obstacles, foods, size}
         }
 
-        pub fn colision_check(&self, pos: &Position, my_snake: &Snake, other_snakes: &Vec<Snake>) -> bool {
-            let my_obstacles = my_snake.get_without_tail();
-            let other_obstacles = Snake::build_obstacles(other_snakes);
-            if (pos.get_x() <= 0 || pos.get_x() > self.size) || (pos.get_y() <= 0 || pos.get_y() > self.size) {
+        pub fn build_obstacles(snakes: &Vec<Snake>) -> Vec<Position> {
+            let mut obstacles:Vec<Position> = vec![];
+            for snake in snakes {
+                for ob in snake.get_without_tail() {
+                    obstacles.push(*ob);
+                }
+                let head = snake.get_head();
+                for direction in Direction::iter() {
+                    let mut pos = *head;
+                    match direction {
+                        Direction::Up => pos = Position::up(&pos),
+                        Direction::Down => pos = Position::down(&pos),
+                        Direction::Left => pos = Position::left(&pos),
+                        Direction::Right => pos = Position::right(&pos),
+                    }
+                    if !obstacles.contains(&pos) {
+                        obstacles.push(pos);
+                    }
+                }
+            }
+            obstacles
+        }
+
+        pub fn build_strict_obstacles(snakes: &Vec<Snake>) -> Vec<Position> {
+            let mut obstacles:Vec<Position> = vec![];
+            for snake in snakes {
+                for ob in snake.get_without_tail() {
+                    obstacles.push(*ob);
+                }
+            }
+
+            obstacles
+        }
+
+        pub fn colision_check(&self, pos: &Position) -> bool {
+            if self.foods.contains(pos)  && pos.get_x() > 1 && pos.get_y() > 1  && pos.get_x() < self.size && pos.get_y() < self.size {
+                return false
+            } else if (pos.get_x() < 1 || pos.get_x() > self.size) || (pos.get_y() < 1 || pos.get_y() > self.size) {
                 return true
-            } else if my_obstacles.contains(pos) || other_obstacles.contains(pos) {
+            } else if self.my_snake.get_without_tail().contains(pos) || self.obstacles.contains(pos) {
+                return true
+            } else {
+                return false
+            }
+        }
+
+        pub fn strict_obstacles_check(&self, pos: &Position) -> bool {
+            if (pos.get_x() < 1 || pos.get_x() > self.size) || (pos.get_y() < 1 || pos.get_y() > self.size) {
+                return true
+            } else if self.my_snake.get_without_tail().contains(pos) || self.strict_obstacles.contains(pos) {
                 return true
             } else {
                 return false
@@ -63,31 +111,6 @@ pub mod map {
 
         pub fn get_without_tail(&self) -> &[Position] {
             &self.body[0..=2]
-        }
-
-        pub fn build_obstacles(snakes: &Vec<Snake>) -> Vec<Position> {
-            let mut obstacles:Vec<Position> = vec![];
-            for snake in snakes {
-                // 其他蛇的蛇头和蛇头的四周, 这里不需要检测棋盘边界
-                // let head = snake.get_head().clone();
-                // let head_left = Position::left(&head);
-                // let head_right = Position::right(&head);
-                // let head_up = Position::up(&head);
-                // let head_down = Position::down(&head);
-                // // body[1]已经包含在蛇头的四周 
-                // let body2 = snake.get_without_tail()[2]; // body[2]
-                // obstacles.push(head);
-                // obstacles.push(head_left);
-                // obstacles.push(head_right);
-                // obstacles.push(head_up);
-                // obstacles.push(head_down);
-                // obstacles.push(body2);
-                for ob in snake.get_without_tail() {
-                    obstacles.push(*ob);
-                }
-            }
-
-            obstacles
         }
 
     }
