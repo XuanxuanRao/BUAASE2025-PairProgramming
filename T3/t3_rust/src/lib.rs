@@ -68,7 +68,7 @@ pub fn greedy_snake_step(board_size: i32, input_my_snake: Vec<i32>, snake_num: i
             })
         .collect::<Vec<_>>();
         if !safe_dirs.is_empty() {
-            let mut max_distance = -1;
+            let mut min_distance = 32;
             let mut best_dir = Direction::Up;
             for dir in safe_dirs {
                 let next_pos = match dir {
@@ -78,9 +78,10 @@ pub fn greedy_snake_step(board_size: i32, input_my_snake: Vec<i32>, snake_num: i
                     Direction::Right => Position::right(head),
                 };
                 // TODO: 这里的距离需要调整
-                let distance = next_pos.get_x() + next_pos.get_y();
-                if distance > max_distance {
-                    max_distance = distance;
+                // 距离棋盘中心最近
+                let distance = ((board_size / 2) - next_pos.get_x()).abs() + ((board_size / 2) - next_pos.get_y()).abs();
+                if distance < min_distance {
+                    min_distance = distance;
                     best_dir = dir;
                 }
             }

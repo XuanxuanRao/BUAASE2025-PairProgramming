@@ -1,8 +1,8 @@
 // Import snake decision functions
-import { greedy_snake_step as snake1 } from './t3-snake-1-dqr/pkg/t3_rust.js';
-import { greedy_snake_step as snake2 } from './t3-snake-4-fxk/pkg/t3_rust.js';
-// import { greedy_snake_step as snake3 } from './t3-snake-{num}-{PL}/pkg/snake.js';
-// import { greedy_snake_step as snake4 } from './t3-snake-{num}-{PL}/pkg/snake.js';
+import { greedy_snake_step as snake1 } from './t3-snake-4-fxk/pkg/t3_rust.js';
+import { greedy_snake_step as snake2 } from './t3-snake-5-yyy/pkg/snake.js';
+import { greedy_snake_step as snake3 } from './t3-snake-3-cxc/pkg/release.js';
+import { greedy_snake_step as snake4 } from './t3-snake-4-fxk/pkg/t3_rust.js';
 // import { greedy_snake_step as snake5 } from './t3-snake-{num}-{PL}/pkg/snake.js';
 // import { greedy_snake_step as snake6 } from './t3-snake-{num}-{PL}/pkg/snake.js';
 // import { greedy_snake_step as snake7 } from './t3-snake-{num}-{PL}/pkg/snake.js';
@@ -72,7 +72,7 @@ export const gameParameters = {
 
 // Random seed, can be undefined for random generation
 // Use BigInt for 64-bit seed support
-export const CUSTOM_SEED = BigInt("0xb5862ee025fbdc64"); // Example: BigInt("0xb5862ee025fbdc64")
+export const CUSTOM_SEED = undefined; // Example: BigInt("0xc8090e2260144fcf")
 
 // Display configurations for more snakes
 export const SNAKE_DISPLAY_CONFIG = {
