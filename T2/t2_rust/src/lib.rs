@@ -199,7 +199,17 @@ mod tests {
     }
   
     #[test]
-    fn test() {
+    fn test_no_way_to_apple() {
+        let mut snake = vec![5, 5, 5, 6, 5, 7, 5, 8];
+        let apple = vec![1, 1];
+        let obstacles = vec![1, 2, 1, 3, 1, 4, 1, 5, 1, 6, 1, 7, 1, 8, 2, 1, 4, 4, 4, 5, 4, 6, 4, 7];
+
+        let result = game(&mut snake, &apple, &obstacles);
+        assert_eq!(result, 1); // 应该返回1，表示无法吃到苹果
+    }
+
+    #[test]
+    fn random_test() {
         let mut positions = Vec::new();
         
         // 生成蛇的位置（4个段）
